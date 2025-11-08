@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase"; // adjust this import as needed
 import { Card } from "flowbite-react";
+import { useNavigate } from "react-router-dom";
 
 type Lecture = {
     id: string;
@@ -11,6 +12,7 @@ type Lecture = {
 
 export function LectureList() {
     const [lectures, setLectures] = useState<Lecture[]>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchLectures() {
@@ -37,8 +39,8 @@ export function LectureList() {
                             Welcome to Lectro
                         </h1>
                         <p className="text-white max-w-md text-center leading-relaxed text-lg">
-                            Hi, welcome to Lectro. This is your space to capture
-                            notes, meetings, or anything you want to remember.
+                            This is your space to capture notes, meetings, or
+                            anything you want to remember.
                         </p>
                     </section>
                 ) : (
@@ -46,6 +48,7 @@ export function LectureList() {
                         <Card
                             key={l.id}
                             className="bg-neutral-900 border border-neutral-800"
+                            onClick={() => navigate(`/lecture/${l.id}`)}
                         >
                             <h5 className="text-xl font-bold">{l.title}</h5>
                             {l.description && (

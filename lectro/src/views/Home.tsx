@@ -1,5 +1,5 @@
-import { LectroNavbar } from "./Navbar";
-import { LectureList } from "./LectureList";
+import { LectroNavbar } from "../components/Navbar";
+import { LectureList } from "../components/LectureList";
 
 export function Home() {
     return (

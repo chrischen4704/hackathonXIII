@@ -46,7 +46,7 @@ export function LectroNavbar() {
             <div className="flex items-center min-w-fit">
                 <button
                     type="button"
-                    className="text-white bg-emerald-600 hover:bg-emerald-500 focus:ring-4 focus:ring-emerald-300 font-medium rounded-full text-lg px-5 py-2 transition shadow"
+                    className="flex items-center justify-center w-12 h-12 text-white bg-emerald-600 hover:bg-emerald-500 focus:ring-4 focus:ring-emerald-300 font-medium rounded-full text-xl transition shadow"
                 >
                     <svg
                         className="w-6 h-6"

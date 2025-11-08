@@ -33,12 +33,14 @@ export function LectureDetail() {
                 {!lecture ? (
                     <div className="text-white/80 text-lg">Loading...</div>
                 ) : (
-                    <div className="w-full max-w-3xl bg-neutral-900 rounded-lg border border-neutral-800 p-6 space-y-6 shadow">
-                        <h1 className="text-3xl font-bold">{lecture.title}</h1>
-                        <p className="text-lg text-white/80">
+                    <div className="w-full max-w-3xl p-6 space-y-6 shadow">
+                        <h1 className="text-3xl font-bold text-white">
+                            {lecture.title}
+                        </h1>
+                        <p className="text-lg text-white">
                             {lecture.description}
                         </p>
-                        {/* Add more editable fields or UI here */}
+                        {/* this section */}
                     </div>
                 )}
             </main>

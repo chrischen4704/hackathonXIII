@@ -3,12 +3,14 @@ import { Modal, Button, TextInput, Textarea } from "flowbite-react";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import { LiveCaptions } from "./LiveCaptions";
 
 export function LectroNavbar({ recordMode = false }) {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [ccActive, setCcActive] = useState(false);
 
     const handleCreateLecture = async () => {
         const docRef = await addDoc(collection(db, "lectures"), {
@@ -51,7 +53,12 @@ export function LectroNavbar({ recordMode = false }) {
                         <div className="flex-1 flex justify-center gap-4">
                             {/* Closed Captions Button */}
                             <button
-                                className="flex items-center gap-2 px-5 py-2 text-white bg-blue-700 hover:bg-blue-800 rounded-lg shadow focus:ring-4 focus:ring-blue-300 text-lg font-medium transition"
+                                onClick={() => setCcActive((prev) => !prev)}
+                                className={`flex items-center gap-2 px-5 py-2 text-white rounded-lg shadow focus:ring-4 text-lg font-medium transition
+                                    ${ccActive 
+                                    ? "bg-blue-800 hover:bg-blue-900 focus:ring-blue-400" 
+                                    : "bg-blue-700 hover:bg-blue-800 focus:ring-blue-300"
+                                    }`}
                                 aria-label="Live Closed Captions"
                                 // onClick={yourCCHandler} SPEECH TO TEXT API
                             >
@@ -63,7 +70,7 @@ export function LectroNavbar({ recordMode = false }) {
                                 >
                                     <path d="M21 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2ZM3 17v-6h18v6Zm0-8V7h18v2Z" />
                                 </svg>
-                                Live CC
+                                {ccActive ? "Stop CC" : "Live CC"}
                             </button>
                             {/* AI Notes Button */}
                             <button
@@ -138,6 +145,10 @@ export function LectroNavbar({ recordMode = false }) {
                     </button>
                 </div>
             </nav>
+            <div className="mt-4 bg-neutral-900 text-white p-4 rounded-lg">
+                 {ccActive && <LiveCaptions isActive={ccActive} />}
+            </div>      
+           
             <Modal show={showModal} onClose={() => setShowModal(false)}>
                 <div className="p-6">
                     <h2 className="text-white text-xl font-bold mb-4">

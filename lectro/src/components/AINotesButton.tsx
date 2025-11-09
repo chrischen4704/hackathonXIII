@@ -6,7 +6,7 @@ export function AINotesButton({ isActive, onClick }: Props) {
     return (
         <button
             onClick={onClick}
-            className={`group relative px-4 py-2 rounded-xl font-semibold transition-all duration-300 whitespace-nowrap ${
+            className={`group relative px-4 py-2 rounded-xl font-semibold transition-all duration-300 whitespace-nowrap border ${
                 isActive
                     ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/50'
                     : 'bg-slate-700 hover:bg-slate-600 text-white border border-slate-600'

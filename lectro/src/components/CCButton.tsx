@@ -6,9 +6,9 @@ export function CCButton({ isActive, onClick }: Props) {
     return (
         <button
             onClick={onClick}
-            className={`group relative px-4 py-2 rounded-xl font-semibold transition-all duration-300 whitespace-nowrap ${
+            className={`group relative px-2 py-1 rounded-xl font-semibold transition-all duration-300 whitespace-nowrap${
                 isActive
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/50'
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-blue-500/50'
                     : 'bg-slate-700 hover:bg-slate-600 text-white border border-slate-600'
             }`}
             aria-label="Live Closed Captions"

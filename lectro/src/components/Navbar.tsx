@@ -19,8 +19,6 @@ type Props = {
     onToggleDyslexicFont?: () => void;
 };
 
-
-
 export function LectroNavbar({
     recordMode = false,
     ccActive: ccActiveProp,
@@ -40,8 +38,6 @@ export function LectroNavbar({
 
     const ccActive = ccActiveProp ?? ccLocal;
     const aiNotesActive = aiNotesActiveProp ?? aiNotesLocal;
-
-    
 
     const toggleCC = () => {
         if (onToggleCC) onToggleCC();
@@ -84,7 +80,7 @@ export function LectroNavbar({
 
     return (
         <>
-            <nav className="sticky top-0 z-50 w-full backdrop-blur-xl bg-slate-950/80 border-b border-slate-800/50 py-3 px-4 flex items-center justify-between gap-4">
+            <nav className="sticky top-0 z-50 w-full backdrop-blur-xl bg-slate-950/80 py-3 px-4 flex items-center justify-between gap-4">
                 {/* Logo */}
                 <div
                     className="flex items-center gap-2 min-w-fit cursor-pointer"
@@ -97,12 +93,13 @@ export function LectroNavbar({
                         <div className="w-9 h-9 bg-gradient-to-br from-emerald-400 via-cyan-400 to-blue-500 rounded-xl rotate-6 group-hover:rotate-12 transition-transform duration-300" />
                         <div className="absolute inset-0 w-9 h-9 bg-gradient-to-br from-emerald-400 via-cyan-400 to-blue-500 rounded-xl blur-lg opacity-50" />
                     </div>
-                    {/* ✨ UPDATED: Added gradient text and subtitle */}
+                    {/* Logo image (replaces textual "Lectro" title) */}
                     <div>
-                        <span className="text-xl font-bold bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent tracking-tight">
-                            Lectro
-                        </span>
-                        <p className="text-xs text-slate-400">AI Assistant</p>
+                        <img
+                            src="/Lectro_logo.svg"
+                            alt="Lectro"
+                            className="h-20 md:h-16 w-auto -ml-2"
+                        />
                     </div>
                 </div>
                 {/* Center controls */}
@@ -217,7 +214,6 @@ export function LectroNavbar({
                                 />
                             </div>
 
-                            
                             <div className="flex gap-3 pt-4">
                                 <button
                                     onClick={(e) => {

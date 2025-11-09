@@ -20,6 +20,7 @@ export function LectureDetail() {
     const [aiNotesActive, setAiNotesActive] = useState(false);
     const [transcript, setTranscript] = useState("");
     const [latestNote, setLatestNote] = useState<string | null>(null);
+    const [dyslexicFontActive, setDyslexicFontActive] = useState(false);
 
     useEffect(() => {
         async function fetchLecture() {
@@ -41,6 +42,8 @@ export function LectureDetail() {
                 onToggleCC={() => setCcActive((v) => !v)}
                 aiNotesActive={aiNotesActive}
                 onToggleAINotes={() => setAiNotesActive((v) => !v)}
+                dyslexicFontActive={dyslexicFontActive}
+                onToggleDyslexicFont={() => setDyslexicFontActive((v) => !v)}
             />
             <main className="flex flex-col items-center pt-24 gap-8 px-4">
                 {!lecture ? (

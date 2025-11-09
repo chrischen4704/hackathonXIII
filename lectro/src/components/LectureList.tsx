@@ -32,7 +32,7 @@ export function LectureList() {
 
     return (
         <main className="min-h-screen bg-neutral-950 text-white flex flex-col items-center pt-10 gap-8">
-            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 w-full px-10">
+            <div className="flex flex-col gap-6 w-[900px] max-w-[90vw] px-10">
                 {lectures.length === 0 ? (
                     <section className="flex flex-col items-center justify-center mt-32 space-y-6 px-4">
                         <h1 className="text-5xl font-extrabold text-white tracking-tight">
@@ -47,7 +47,7 @@ export function LectureList() {
                     lectures.map((l) => (
                         <Card
                             key={l.id}
-                            className="bg-neutral-900 border border-neutral-800 rounded-xl"
+                            className="bg-neutral-900 border border-neutral-800 rounded-xl w-full"
                             onClick={() => navigate(`/lecture/${l.id}`)}
                         >
                             <h5 className="text-xl font-bold">{l.title}</h5>

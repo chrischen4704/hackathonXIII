@@ -266,6 +266,25 @@ export function SimpleEditor({
         }
     }, [appendContent, editor]);
 
+    // When the parent provides new initialContent (e.g. loaded from Firestore),
+    // update the editor's content. This ensures the editor reflects saved data
+    // when navigating back into a lecture.
+    useEffect(() => {
+        if (!editor) return;
+        if (initialContent == null) return;
+        try {
+            const current = editor.getHTML();
+            if (current !== initialContent) {
+                editor.commands.setContent(initialContent);
+            }
+        } catch (e) {
+            console.error(
+                "Failed to set editor content from initialContent prop:",
+                e
+            );
+        }
+    }, [initialContent, editor]);
+
     const rect = useCursorVisibility({
         editor,
         overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,

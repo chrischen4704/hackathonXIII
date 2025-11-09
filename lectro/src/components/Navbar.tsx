@@ -7,6 +7,7 @@ import { CCButton } from "./CCButton";
 import { AINotesButton } from "./AINotesButton";
 import { PlusButton } from "./PlusButton";
 import { SettingsDropdown } from "./SettingsDropdown";
+import { DyslexicFontButton } from "./DyslexicFontButton";
 
 type Props = {
     recordMode?: boolean;
@@ -14,7 +15,11 @@ type Props = {
     onToggleCC?: () => void;
     aiNotesActive?: boolean;
     onToggleAINotes?: () => void;
+    dyslexicFontActive?: boolean;
+    onToggleDyslexicFont?: () => void;
 };
+
+
 
 export function LectroNavbar({
     recordMode = false,
@@ -22,6 +27,8 @@ export function LectroNavbar({
     onToggleCC,
     aiNotesActive: aiNotesActiveProp,
     onToggleAINotes,
+    dyslexicFontActive: dyslexicFontActiveProp,
+    onToggleDyslexicFont,
 }: Props) {
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
@@ -33,6 +40,8 @@ export function LectroNavbar({
 
     const ccActive = ccActiveProp ?? ccLocal;
     const aiNotesActive = aiNotesActiveProp ?? aiNotesLocal;
+
+    
 
     const toggleCC = () => {
         if (onToggleCC) onToggleCC();
@@ -75,7 +84,7 @@ export function LectroNavbar({
 
     return (
         <>
-            <nav className="sticky top-0 z-50 w-full backdrop-blur-xl bg-slate-950/80 border-b border-slate-800/50 py-3 px-4 flex items-center gap-4">
+            <nav className="sticky top-0 z-50 w-full backdrop-blur-xl bg-slate-950/80 border-b border-slate-800/50 py-3 px-4 flex items-center justify-between gap-4">
                 {/* Logo */}
                 <div
                     className="flex items-center gap-2 min-w-fit cursor-pointer"
@@ -105,13 +114,17 @@ export function LectroNavbar({
                                 isActive={aiNotesActive}
                                 onClick={toggleAINotes}
                             />
+                            <DyslexicFontButton
+                                isActive={dyslexicFontActiveProp ?? false}
+                                onClick={onToggleDyslexicFont ?? (() => {})}
+                            />
                         </div>
                     ) : (
                         <div className="flex-1 flex justify-center">
                             <div className="relative w-full max-w-md">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg
-                                        className="w-5 h-5 text-cyan-400/70"
+                                        className="w-4 h-4 text-gray-500 dark:text-gray-400"
                                         aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
@@ -129,8 +142,8 @@ export function LectroNavbar({
                                 <input
                                     type="search"
                                     id="lecture-search"
-                                    className="block w-full pl-12 pr-4 py-3 bg-slate-100 border border-slate-300 rounded-xl text-black placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:shadow-[0_0_12px_rgba(34,211,238,0.4)] focus:border-transparent transition-all shadow-md hover:bg-slate-50"
-                                    placeholder="🔍 Search lectures..."
+                                    className="text-m block w-full p-2 pl-8 bg-slate-800/50 border border-slate-700/50 rounded-xl text-black placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:shadow-[0_0_12px_rgba(34,211,238,0.4)] focus:border-transparent transition-all shadow-md hover:bg-slate-800/70"
+                                    placeholder="Search lectures..."
                                 />
                             </div>
                         </div>
@@ -167,57 +180,62 @@ export function LectroNavbar({
                 </div>
             </nav>
             <Modal show={showModal} onClose={() => setShowModal(false)}>
-                <div className="flex justify-center bg-gray-900 rounded-lg shadow-xl w-[380px] mx-auto py-8 px-6 flex flex-col items-center">
-                    <h2 className="text-white text-2xl font-bold mb-6 text-center tracking-tight">
-                        Create New Lecture
-                    </h2>
-                    <div className="w-full space-y-4">
-                        {/* ✨ UPDATED: Better input styling */}
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">
-                                Title
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="e.g., Machine Learning 101"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                required
-                                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
-                            />
-                        </div>
+                {/* Overlay-centered container to ensure modal is centered on screen */}
+                <div className="fixed inset-0 flex items-center justify-center p-4">
+                    <div className="bg-gray-900 rounded-lg shadow-xl w-[380px] py-8 px-6 flex flex-col items-center">
+                        <h2 className="text-white text-2xl font-bold mb-6 text-center tracking-tight">
+                            Create New Lecture
+                        </h2>
+                        <div className="w-full space-y-4">
+                            {/* ✨ UPDATED: Better input styling */}
+                            <div>
+                                <label className="block text-sm font-medium text-white mb-2">
+                                    Title
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g., Machine Learning 101"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    required
+                                    className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-black placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
+                                />
+                            </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">
-                                Description
-                            </label>
-                            <textarea
-                                placeholder="Brief description of the lecture..."
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                rows={3}
-                                className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all resize-none"
-                            />
-                        </div>
+                            <div>
+                                <label className="block text-sm font-medium text-white mb-2">
+                                    Description
+                                </label>
+                                <textarea
+                                    placeholder="Brief description of the lecture..."
+                                    value={description}
+                                    onChange={(e) =>
+                                        setDescription(e.target.value)
+                                    }
+                                    rows={3}
+                                    className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-black placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all resize-none"
+                                />
+                            </div>
 
-                        {/* ✨ UPDATED: Gradient buttons with shadows */}
-                        <div className="flex gap-3 pt-4">
-                            <button
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleCreateLecture();
-                                }}
-                                disabled={!title.trim()}
-                                className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/30"
-                            >
-                                Create
-                            </button>
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className="flex-1 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl transition-all"
-                            >
-                                Cancel
-                            </button>
+                            
+                            <div className="flex gap-3 pt-4">
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleCreateLecture();
+                                    }}
+                                    disabled={!title.trim()}
+                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-500/30"
+                                >
+                                    Create
+                                </button>
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="flex-1 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl transition-all"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

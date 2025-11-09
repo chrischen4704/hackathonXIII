@@ -47,7 +47,7 @@ export function LectureList() {
                     lectures.map((l) => (
                         <Card
                             key={l.id}
-                            className="bg-neutral-900 border border-neutral-800"
+                            className="bg-neutral-900 border border-neutral-800 rounded-xl"
                             onClick={() => navigate(`/lecture/${l.id}`)}
                         >
                             <h5 className="text-xl font-bold">{l.title}</h5>

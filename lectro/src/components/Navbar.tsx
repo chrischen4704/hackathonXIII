@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Button, TextInput, Textarea } from "flowbite-react";
+import { Modal, Button, Textarea } from "flowbite-react";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
@@ -30,7 +30,7 @@ export function LectroNavbar({ recordMode = false }) {
 
     return (
         <>
-            <nav className="w-full bg-neutral-950 border-b border-neutral-900 py-3 px-4 flex items-center gap-4">
+            <nav className="w-full bg-neutral-950 py-3 px-4 flex items-center gap-4">
                 {/* Left: Logo + name */}
                 {/* <div className="flex items-center gap-2 min-w-fit">
                     <div className="w-7 h-7 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-md" />
@@ -46,7 +46,7 @@ export function LectroNavbar({ recordMode = false }) {
                     role="button"
                     aria-label="Go to Home"
                 >
-                    <div className="w-7 h-7 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-md" />
+                    <div className="w-9 h-9 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-md" />
                     <span className="text-xl font-bold text-white tracking-tight">
                         Lectro
                     </span>
@@ -58,23 +58,37 @@ export function LectroNavbar({ recordMode = false }) {
                         <div className="flex-1 flex justify-center gap-4">
                             {/* Start Speech Recording  */}
                             <button
-                                className="flex items-center gap-2 px-5 py-2 text-white bg-blue-700 hover:bg-blue-800 rounded-lg shadow focus:ring-4 focus:ring-blue-300 text-lg font-medium transition"
+                                className="flex items-center gap-2 px-5 py-2 text-white bg-blue-700 hover:bg-blue-800 rounded-lg shadow focus:ring-4 focus:ring-blue-300 text-m font-medium transition"
                                 aria-label="Live Closed Captions"
                                 // onClick={yourCCHandler} SPEECH TO TEXT API
                             >
-                                <svg
+                                {/* <svg
                                     className="w-5 h-5"
                                     fill="currentColor"
                                     aria-hidden="true"
                                     viewBox="0 0 24 24"
                                 >
                                     <path d="M21 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2ZM3 17v-6h18v6Zm0-8V7h18v2Z" />
+                                </svg> */}
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+                                    />
                                 </svg>
-                                Live CC
+                                Start Closed Captions
                             </button>
                             {/* AI Notes Button */}
                             <button
-                                className="flex items-center gap-2 px-5 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg shadow focus:ring-4 focus:ring-red-300 text-lg font-medium transition"
+                                className="flex items-center gap-2 px-5 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg shadow focus:ring-4 focus:ring-red-300 text-m font-medium transition"
                                 aria-label="Live AI Note Taking"
                                 // onClick={yourAINotesHandler} GPT API
                             >
@@ -86,38 +100,44 @@ export function LectroNavbar({ recordMode = false }) {
                                 >
                                     <circle cx="12" cy="12" r="8" />
                                 </svg>
-                                Live AI Notes
+                                Start AI Notetaking
                             </button>
                         </div>
                     ) : (
-                        <div className="relative w-full max-w-4xl">
-                            <span className="absolute left-[10px] top-1/2 -translate-y-1/2 text-gray-400">
-                                <svg
-                                    className="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M21 21l-4-4m0 0A7 7 0 105 5a7 7 0 0012 12z"
-                                    />
-                                </svg>
-                            </span>
-                            <input
-                                type="text"
-                                placeholder="Search lectures..."
-                                className="pl-8 pr-4 py-1.5 w-full text-white bg-neutral-900 border border-neutral-800 rounded-full focus:ring-1 focus:ring-emerald-600 outline-none"
-                                style={{
-                                    background: "#151618",
-                                    color: "#fff",
-                                    fontSize: "1rem",
-                                }}
-                            />
-                        </div>
+                        <form className="max-w-md mx-auto">
+                            <label
+                                htmlFor="default-search"
+                                className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+                            >
+                                Search
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg
+                                        className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                        />
+                                    </svg>
+                                </div>
+                                <input
+                                    type="search"
+                                    id="default-search"
+                                    className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Search lectures..."
+                                    required
+                                />
+                            </div>
+                        </form>
                     )}
                 </div>
 
@@ -144,7 +164,7 @@ export function LectroNavbar({ recordMode = false }) {
                         </svg>
                     </button>
                 </div> */}
-                <div className="flex items-center min-w-fit">
+                <div className="flex items-center gap-4 min-w-fit">
                     {recordMode ? (
                         <div className="relative">
                             <button
@@ -174,9 +194,9 @@ export function LectroNavbar({ recordMode = false }) {
                                 </svg>
                             </button>
                             {menuOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-neutral-900 rounded-lg shadow-lg border border-neutral-800 z-50">
+                                <div className="absolute right-0 mt-4 w-[240px] bg-[#181d28] rounded-lg shadow-lg border border-neutral-800 z-70 p-1">
                                     <button
-                                        className="w-full text-left px-4 py-2 text-white hover:bg-neutral-800"
+                                        className="w-full flex items-center gap-2 text-left px-3 py-3 text-white hover:bg-neutral-800 rounded-lg transition whitespace-nowrap"
                                         // onClick={handleDelete}
                                     >
                                         <svg
@@ -198,10 +218,10 @@ export function LectroNavbar({ recordMode = false }) {
           2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                                             />
                                         </svg>
-                                        Delete lecture
+                                        Delete
                                     </button>
                                     <button
-                                        className="w-full flex items-center gap-2 text-left px-4 py-2 text-white hover:bg-neutral-800"
+                                        className="w-full flex items-center gap-2 text-left px-3 py-3 text-white hover:bg-neutral-800 rounded-lg"
                                         // onClick={handleExport}
                                     >
                                         <svg
@@ -224,7 +244,7 @@ export function LectroNavbar({ recordMode = false }) {
                                         Download PDF
                                     </button>
                                     <button
-                                        className="w-full text-left px-4 py-2 text-white hover:bg-neutral-800"
+                                        className="w-full flex items-center gap-2 text-left px-3 py-3 text-white hover:bg-neutral-800 rounded-lg whitespace-nowrap"
                                         // onClick={handleExport}
                                     >
                                         <svg
@@ -269,41 +289,59 @@ export function LectroNavbar({ recordMode = false }) {
                             </svg>
                         </button>
                     )}
+                    <div className="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-8 h-8 text-gray-400"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                            />
+                        </svg>
+                    </div>
                 </div>
             </nav>
             <Modal show={showModal} onClose={() => setShowModal(false)}>
-                <div className="p-6">
-                    <h2 className="text-white text-xl font-bold mb-4">
+                <div className="flex justify-center bg-gray-900 rounded-lg shadow-xl w-[380px] mx-auto py-8 px-6 flex flex-col items-center">
+                    <h2 className="text-white text-2xl font-bold mb-6 text-center tracking-tight">
                         Create New Lecture
                     </h2>
                     <form
-                        className="space-y-4"
+                        className="w-full space-y-4"
                         onSubmit={(e) => {
                             e.preventDefault();
                             handleCreateLecture();
                         }}
                     >
-                        <TextInput
+                        <Textarea
                             placeholder="Title"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             required
+                            className="w-full rounded-lg border-none bg-gray-800 text-white px-4 py-2 text-base min-h-[64px] resize-none focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                         />
                         <Textarea
                             placeholder="Description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
+                            className="w-full rounded-lg border-none bg-gray-800 text-white px-4 py-2 text-base min-h-[64px] resize-none focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                         />
-                        <div className="flex gap-3 pt-2">
+                        <div className="flex gap-4 pt-4">
                             <Button
-                                color="green"
+                                className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-xl px-0 py-2 text-base font-semibold shadow-md transition"
                                 type="submit"
                                 disabled={!title.trim()}
                             >
                                 Create
                             </Button>
                             <Button
-                                color="red"
+                                className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-xl px-0 py-2 text-base font-semibold shadow-md transition"
                                 type="button"
                                 onClick={() => setShowModal(false)}
                             >

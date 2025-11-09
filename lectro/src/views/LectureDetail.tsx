@@ -63,6 +63,7 @@ export function LectureDetail() {
                                         lecture.title
                                     }</h1><p>${lecture.description || ""}</p>`}
                                     appendContent={latestNote}
+                                    dyslexicFontActive={dyslexicFontActive}
                                 />
                             </div>
                             {ccActive && (
@@ -70,11 +71,13 @@ export function LectureDetail() {
                                     <LiveCaptions
                                         isActive={ccActive}
                                         onTranscript={(t) => setTranscript(t)}
+                                        dyslexicFontActive={dyslexicFontActive}
                                     />
                                     {aiNotesActive && (
                                         <LiveAINotes
                                             isActive={aiNotesActive}
                                             transcript={transcript}
+                                            dyslexicFontActive={dyslexicFontActive}
                                             onNewNotes={(notes) => {
                                                 // append each note into the editor, spaced slightly so
                                                 // each triggers the Editor's appendContent effect
@@ -97,6 +100,7 @@ export function LectureDetail() {
                                     <LiveAINotes
                                         isActive={aiNotesActive}
                                         transcript={transcript}
+                                        dyslexicFontActive={dyslexicFontActive}
                                         onNewNotes={(notes) => {
                                             notes.forEach((note, i) =>
                                                 setTimeout(

@@ -17,12 +17,14 @@ interface LiveAINotesProps {
     isActive: boolean;
     transcript: string;
     onNewNotes?: (notes: string[]) => void;
+    dyslexicFontActive?: boolean;
 }
 
 export const LiveAINotes: React.FC<LiveAINotesProps> = ({
     isActive,
     transcript,
     onNewNotes,
+    dyslexicFontActive = false,
 }) => {
     const [notes, setNotes] = useState<string[]>([]);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -321,7 +323,12 @@ export const LiveAINotes: React.FC<LiveAINotesProps> = ({
                 )}
             </div>
             {notes.length > 0 ? (
-                <ul className="list-disc ml-6 space-y-2 text-gray-300">
+                <ul 
+                    className={`list-disc ml-6 space-y-2 text-gray-300 ${dyslexicFontActive ? 'dyslexic-font-active' : ''}`}
+                    style={{
+                        fontFamily: dyslexicFontActive ? '"OpenDyslexic", sans-serif' : undefined
+                    }}
+                >
                     {notes.map((note, idx) => (
                         <li key={idx}>{note}</li>
                     ))}

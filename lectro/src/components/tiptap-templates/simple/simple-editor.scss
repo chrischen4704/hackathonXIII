@@ -114,3 +114,14 @@ body,
         padding: 1rem 1.5rem 30vh;
     }
 }
+
+/* OpenDyslexic Font support */
+.dyslexic-font-active .tiptap.ProseMirror,
+.dyslexic-font-active .tiptap.ProseMirror * {
+    font-family: "OpenDyslexic", sans-serif !important;
+}
+
+.dyslexic-font-active .simple-editor-content .tiptap.ProseMirror.simple-editor,
+.dyslexic-font-active .simple-editor-content .tiptap.ProseMirror.simple-editor * {
+    font-family: "OpenDyslexic", sans-serif !important;
+}

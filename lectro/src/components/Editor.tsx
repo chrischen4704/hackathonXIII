@@ -8,6 +8,7 @@ type Props = {
     initialContent?: string;
     appendContent?: string | null;
     className?: string;
+    dyslexicFontActive?: boolean;
 };
 
 export default function Editor({
@@ -15,6 +16,7 @@ export default function Editor({
     initialContent = "",
     appendContent = null,
     className = "",
+    dyslexicFontActive = false,
 }: Props) {
     const [content, setContent] = useState(initialContent);
 
@@ -46,6 +48,7 @@ export default function Editor({
                 <SimpleEditor
                     appendContent={appendContent}
                     initialContent={content}
+                    dyslexicFontActive={dyslexicFontActive}
                     onUpdate={({ editor }) => {
                         handleContentChange(editor.getHTML());
                     }}

@@ -191,12 +191,14 @@ type SimpleEditorProps = {
     appendContent?: string | null;
     initialContent?: string | null;
     onUpdate?: (props: { editor: any }) => void;
+    dyslexicFontActive?: boolean;
 };
 
 export function SimpleEditor({
     appendContent,
     initialContent,
     onUpdate,
+    dyslexicFontActive = false,
 }: SimpleEditorProps) {
     const isMobile = useIsMobile();
     const { height } = useWindowSize();
@@ -297,7 +299,7 @@ export function SimpleEditor({
     }, [isMobile, mobileView]);
 
     return (
-        <div className="simple-editor-wrapper">
+        <div className={`simple-editor-wrapper ${dyslexicFontActive ? 'dyslexic-font-active' : ''}`}>
             <EditorContext.Provider value={{ editor }}>
                 <Toolbar
                     ref={toolbarRef}

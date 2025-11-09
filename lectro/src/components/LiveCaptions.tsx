@@ -19,9 +19,10 @@ interface SpeechRecognitionEvent extends Event {
 interface LiveCaptionsProps {
   isActive: boolean;
   onTranscript?: (text: string) => void;
+  dyslexicFontActive?: boolean;
 }
 
-export const LiveCaptions: React.FC<LiveCaptionsProps> = ({ isActive, onTranscript }) => {
+export const LiveCaptions: React.FC<LiveCaptionsProps> = ({ isActive, onTranscript, dyslexicFontActive = false }) => {
   const [transcript, setTranscript] = useState("");
 
   // references for state tracking
@@ -141,7 +142,12 @@ export const LiveCaptions: React.FC<LiveCaptionsProps> = ({ isActive, onTranscri
   return (
     <div className="bg-neutral-900 text-white p-4 rounded-lg mt-4 max-h-60 overflow-y-auto transition-all duration-100">
       <h2 className="text-lg font-semibold mb-2">Live Captions</h2>
-      <p className="whitespace-pre-wrap text-gray-300">
+      <p 
+        className={`whitespace-pre-wrap text-gray-300 ${dyslexicFontActive ? 'dyslexic-font-active' : ''}`}
+        style={{
+          fontFamily: dyslexicFontActive ? '"OpenDyslexic", sans-serif' : undefined
+        }}
+      >
         {transcript
           ? transcript.replace(/ \(interim\)$/g, "")
           : "Waiting for speech..."}

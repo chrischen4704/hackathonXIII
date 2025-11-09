@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-/* Minimal types */
+/* --- Type definitions --- */
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
@@ -17,76 +17,80 @@ interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
 }
 
+/* --- Component --- */
 export const LiveCaptions: React.FC<{ isActive: boolean }> = ({ isActive }) => {
   const [transcript, setTranscript] = useState("");
+
+  // references for state tracking
   const recogRef = useRef<SpeechRecognition | null>(null);
-  const runningRef = useRef(false); // internal running flag to avoid double start
-  const activeRef = useRef(isActive); // to read latest in callbacks
+  const runningRef = useRef(false);
+  const activeRef = useRef(isActive);
 
   useEffect(() => {
     activeRef.current = isActive;
   }, [isActive]);
 
-  // init once
+  /* ---------- Initialize once ---------- */
   useEffect(() => {
     const SR =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
     if (!SR) {
-      console.warn("Web Speech API not supported in this browser (Chrome/Edge only).");
+      console.warn("⚠️ Web Speech API not supported (use Chrome or Edge).");
       return;
     }
+
     const recog: SpeechRecognition = new SR();
     recog.continuous = true;
     recog.interimResults = true;
     recog.lang = "en-US";
 
+    /* ---------- Handle new speech results ---------- */
     recog.onresult = (event: SpeechRecognitionEvent) => {
-      let interim = "";
-      let finals = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const r = event.results[i];
-        if (r.isFinal) finals += r[0].transcript + " ";
-        else interim += r[0].transcript;
+      let fullText = "";
+      let interimText = "";
+
+      // Build transcript from ALL results
+      for (let i = 0; i < event.results.length; i++) {
+        const result = event.results[i];
+        if (result.isFinal) {
+          fullText += result[0].transcript + " ";
+        } else {
+          interimText += result[0].transcript;
+        }
       }
-      setTranscript((prev) => {
-        const base = prev.replace(/ \(interim\)$/g, "");
-        return (base + finals + interim).trim() + (interim ? " (interim)" : "");
-      });
+
+      // Set the complete transcript
+      setTranscript((fullText + interimText).trim() + (interimText ? " (interim)" : ""));
     };
 
+    /* ---------- Error handling ---------- */
     recog.onerror = (e: any) => {
-      // Common error codes: 'not-allowed', 'no-speech', 'audio-capture', 'aborted'
-      console.error("Speech error:", e.error);
       if (e.error === "not-allowed") {
-        // user blocked mic
-        // Tip: ask the user to click the camera/mic icon in the URL bar and allow microphone for site
-      }
-      if (e.error === "aborted") {
-        // benign when we call abort(); ignore
-        return;
+        console.error("❌ Microphone permission denied.");
+      } else if (e.error !== "aborted") {
+        console.error("Speech recognition error:", e.error);
       }
     };
 
+    /* ---------- Auto-restart after silence ---------- */
     recog.onend = () => {
       runningRef.current = false;
-      // Chrome stops after silence; if still active, try to restart after a tick
       if (activeRef.current) {
         setTimeout(() => {
-          if (!runningRef.current) {
-            try {
-              recog.start();
-              runningRef.current = true;
-            } catch (err) {
-              // start can throw if quickly re-called; we’ll try again on next onend
-              console.debug("Restart start() failed, will retry on next onend:", err);
-            }
+          try {
+            recog.start();
+            runningRef.current = true;
+          } catch (err) {
+            console.debug("Restart failed (will retry):", err);
           }
-        }, 150);
+        }, 200);
       }
     };
 
     recogRef.current = recog;
 
+    /* ---------- Cleanup on unmount ---------- */
     return () => {
       try {
         recog.onresult = null;
@@ -100,38 +104,43 @@ export const LiveCaptions: React.FC<{ isActive: boolean }> = ({ isActive }) => {
     };
   }, []);
 
-  // respond to isActive changes
+  /* ---------- React to start/stop toggle ---------- */
   useEffect(() => {
     const recog = recogRef.current;
     if (!recog) return;
 
     if (isActive) {
-      setTranscript(""); // fresh session buffer
+      // start listening
+      setTranscript("");
       if (!runningRef.current) {
         try {
           recog.start();
           runningRef.current = true;
+          console.log("🎙️ Live CC started");
         } catch (err) {
-          // If "not allowed" or "already started", we'll recover via onend
-          console.debug("Initial start() failed:", err);
+          console.debug("Initial start failed:", err);
         }
       }
     } else {
-      // stop & clear temp buffer
+      // stop listening
       try {
-        recog.abort(); // abort is more immediate than stop()
+        recog.abort();
         recog.stop();
       } catch {}
       runningRef.current = false;
       setTranscript("");
+      console.log("🛑 Live CC stopped");
     }
   }, [isActive]);
 
+  /* ---------- Render captions ---------- */
   return (
     <div className="bg-neutral-900 text-white p-4 rounded-lg mt-4 max-h-60 overflow-y-auto transition-all duration-100">
       <h2 className="text-lg font-semibold mb-2">Live Captions</h2>
-      <p className="text-gray-300 whitespace-pre-wrap">
-        {transcript ? transcript.replace(/ \(interim\)$/g, "") : "Waiting for speech..."}
+      <p className="whitespace-pre-wrap text-gray-300">
+        {transcript
+          ? transcript.replace(/ \(interim\)$/g, "")
+          : "Waiting for speech..."}
       </p>
     </div>
   );

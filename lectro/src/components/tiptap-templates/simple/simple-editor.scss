@@ -1,0 +1,116 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+body {
+    --tt-toolbar-height: 44px;
+    --tt-theme-text: var(--tt-gray-light-900);
+
+    .dark & {
+        --tt-theme-text: var(--tt-gray-dark-900);
+    }
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    color: var(--tt-theme-text);
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    padding: 0;
+    overscroll-behavior-y: none;
+}
+
+html,
+body {
+    overscroll-behavior-x: none;
+}
+
+html,
+body,
+#root,
+#app {
+    height: 100%;
+    background-color: var(--tt-bg-color);
+}
+
+::-webkit-scrollbar {
+    width: 0.25rem;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--tt-scrollbar-color) transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--tt-scrollbar-color);
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tiptap.ProseMirror {
+    font-family: "DM Sans", sans-serif;
+}
+
+.simple-editor-wrapper {
+    /* don't force fullscreen when embedded - allow the parent to size it */
+    width: 100%;
+    height: auto;
+    overflow: auto;
+}
+
+.simple-editor-content {
+    max-width: 648px;
+    width: 100%;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.simple-editor-content .tiptap.ProseMirror.simple-editor {
+    flex: 1;
+    /* provide a sensible page-like padding and ensure readable width */
+    padding: 2rem 2rem 8rem;
+    background-color: transparent;
+    color: inherit;
+    min-height: 32rem; /* ~40vh on many screens */
+    box-sizing: border-box;
+}
+
+/* Make the toolbar stand out from the editor background */
+.simple-editor-wrapper .tiptap-toolbar {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 8px 24px rgba(2, 6, 23, 0.6);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Improve selection visibility when highlighting text */
+.simple-editor-content .tiptap.ProseMirror.simple-editor ::selection {
+    background: rgba(99, 102, 241, 0.35); /* indigo-500 with opacity */
+    color: #fff;
+}
+.simple-editor-content .tiptap.ProseMirror.simple-editor ::-moz-selection {
+    background: rgba(99, 102, 241, 0.35);
+    color: #fff;
+}
+
+/* Slight 'paper' look for editing area when embedded */
+.simple-editor-content .tiptap.ProseMirror.simple-editor {
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0.01),
+        rgba(255, 255, 255, 0.01)
+    );
+    border-radius: 0.5rem;
+}
+
+@media screen and (max-width: 480px) {
+    .simple-editor-content .tiptap.ProseMirror.simple-editor {
+        padding: 1rem 1.5rem 30vh;
+    }
+}

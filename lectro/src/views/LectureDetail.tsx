@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { LectroNavbar } from "../components/Navbar";
+import Editor from "../components/Editor";
+import { LiveCaptions } from "../components/LiveCaptions";
+import { LiveAINotes } from "../components/LiveAINotes";
 
 type Lecture = {
     id: string;
@@ -13,6 +16,10 @@ type Lecture = {
 export function LectureDetail() {
     const { id } = useParams<{ id: string }>();
     const [lecture, setLecture] = useState<Lecture | null>(null);
+    const [ccActive, setCcActive] = useState(false);
+    const [aiNotesActive, setAiNotesActive] = useState(false);
+    const [transcript, setTranscript] = useState("");
+    const [latestNote, setLatestNote] = useState<string | null>(null);
 
     useEffect(() => {
         async function fetchLecture() {
@@ -28,19 +35,77 @@ export function LectureDetail() {
 
     return (
         <div className="min-h-screen bg-gray-900">
-            <LectroNavbar recordMode />
-            <main className="flex flex-col items-center pt-24 gap-8">
+            <LectroNavbar
+                recordMode
+                ccActive={ccActive}
+                onToggleCC={() => setCcActive((v) => !v)}
+                aiNotesActive={aiNotesActive}
+                onToggleAINotes={() => setAiNotesActive((v) => !v)}
+            />
+            <main className="flex flex-col items-center pt-24 gap-8 px-4">
                 {!lecture ? (
                     <div className="text-white/80 text-lg">Loading...</div>
                 ) : (
-                    <div className="w-full max-w-3xl p-6 space-y-6 shadow">
-                        <h1 className="text-3xl font-bold text-white">
-                            {lecture.title}
-                        </h1>
-                        <p className="text-lg text-white">
-                            {lecture.description}
-                        </p>
-                        {/* this section */}
+                    <div className="w-full max-w-6xl p-6 space-y-6 shadow">
+                        {/* Layout: when CC active, split screen */}
+                        <div
+                            className={`grid gap-6 ${
+                                ccActive ? "grid-cols-2" : "grid-cols-1"
+                            }`}
+                        >
+                            <div>
+                                <Editor
+                                    lectureId={lecture.id}
+                                    initialContent={`<h1>${
+                                        lecture.title
+                                    }</h1><p>${lecture.description || ""}</p>`}
+                                    appendContent={latestNote}
+                                />
+                            </div>
+                            {ccActive && (
+                                <div className="space-y-4">
+                                    <LiveCaptions
+                                        isActive={ccActive}
+                                        onTranscript={(t) => setTranscript(t)}
+                                    />
+                                    {aiNotesActive && (
+                                        <LiveAINotes
+                                            isActive={aiNotesActive}
+                                            transcript={transcript}
+                                            onNewNotes={(notes) => {
+                                                // append each note into the editor, spaced slightly so
+                                                // each triggers the Editor's appendContent effect
+                                                notes.forEach((note, i) =>
+                                                    setTimeout(
+                                                        () =>
+                                                            setLatestNote(note),
+                                                        i * 120
+                                                    )
+                                                );
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                            )}
+
+                            {/* When CC is off but AI notes are enabled, show the AI notes below the editor */}
+                            {!ccActive && aiNotesActive && (
+                                <div className="mt-4">
+                                    <LiveAINotes
+                                        isActive={aiNotesActive}
+                                        transcript={transcript}
+                                        onNewNotes={(notes) => {
+                                            notes.forEach((note, i) =>
+                                                setTimeout(
+                                                    () => setLatestNote(note),
+                                                    i * 120
+                                                )
+                                            );
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
             </main>

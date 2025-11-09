@@ -23,13 +23,11 @@ interface LiveCaptionsProps {
 
 export const LiveCaptions: React.FC<LiveCaptionsProps> = ({ isActive, onTranscript }) => {
   const [transcript, setTranscript] = useState("");
-  const [interimTranscript, setInterimTranscript] = useState("");
 
   // references for state tracking
   const recogRef = useRef<SpeechRecognition | null>(null);
   const runningRef = useRef(false);
   const activeRef = useRef(isActive);
-  const finalTranscriptRef = useRef(""); // Store accumulated final results
 
   useEffect(() => {
     activeRef.current = isActive;
@@ -41,7 +39,7 @@ export const LiveCaptions: React.FC<LiveCaptionsProps> = ({ isActive, onTranscri
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SR) {
-      console.warn("⚠️ Web Speech API not supported (use Chrome or Edge).");
+      console.warn("âš ï¸ Web Speech API not supported (use Chrome or Edge).");
       return;
     }
 
@@ -52,38 +50,28 @@ export const LiveCaptions: React.FC<LiveCaptionsProps> = ({ isActive, onTranscri
 
     /* ---------- Handle new speech results ---------- */
     recog.onresult = (event: SpeechRecognitionEvent) => {
+      let fullText = "";
       let interimText = "";
 
-      // Process only NEW results starting from resultIndex
-      for (let i = event.resultIndex; i < event.results.length; i++) {
+      // Build transcript from ALL results
+      for (let i = 0; i < event.results.length; i++) {
         const result = event.results[i];
-        const text = result[0].transcript;
-
         if (result.isFinal) {
-          // Add final result to accumulated transcript
-          finalTranscriptRef.current += text + " ";
-          console.log("✅ Final:", text);
+          fullText += result[0].transcript + " ";
         } else {
-          // Show interim results temporarily
-          interimText += text;
+          interimText += result[0].transcript;
         }
       }
 
-      // Update display with accumulated final + current interim
-      const fullText = finalTranscriptRef.current + interimText;
-      setTranscript(fullText.trim());
-      setInterimTranscript(interimText);
-
-      // Send only final accumulated text to parent
-      if (onTranscript) {
-        onTranscript(finalTranscriptRef.current.trim());
-      }
+      // Set the complete transcript
+      setTranscript((fullText + interimText).trim() + (interimText ? " (interim)" : ""));
+      if (onTranscript) onTranscript((fullText + interimText).trim());
     };
 
     /* ---------- Error handling ---------- */
     recog.onerror = (e: any) => {
       if (e.error === "not-allowed") {
-        console.error("❌ Microphone permission denied.");
+        console.error("âŒ Microphone permission denied.");
       } else if (e.error !== "aborted") {
         console.error("Speech recognition error:", e.error);
       }
@@ -118,7 +106,7 @@ export const LiveCaptions: React.FC<LiveCaptionsProps> = ({ isActive, onTranscri
       recogRef.current = null;
       runningRef.current = false;
     };
-  }, [onTranscript]);
+  }, []);
 
   /* ---------- React to start/stop toggle ---------- */
   useEffect(() => {
@@ -128,13 +116,11 @@ export const LiveCaptions: React.FC<LiveCaptionsProps> = ({ isActive, onTranscri
     if (isActive) {
       // start listening
       setTranscript("");
-      setInterimTranscript("");
-      finalTranscriptRef.current = ""; // Reset accumulated transcript
       if (!runningRef.current) {
         try {
           recog.start();
           runningRef.current = true;
-          console.log("🎙️ Live CC started");
+          console.log("ðŸŽ™ï¸ Live CC started");
         } catch (err) {
           console.debug("Initial start failed:", err);
         }
@@ -147,9 +133,7 @@ export const LiveCaptions: React.FC<LiveCaptionsProps> = ({ isActive, onTranscri
       } catch {}
       runningRef.current = false;
       setTranscript("");
-      setInterimTranscript("");
-      finalTranscriptRef.current = "";
-      console.log("🛑 Live CC stopped");
+      console.log("ðŸ›‘ Live CC stopped");
     }
   }, [isActive]);
 
@@ -158,10 +142,9 @@ export const LiveCaptions: React.FC<LiveCaptionsProps> = ({ isActive, onTranscri
     <div className="bg-neutral-900 text-white p-4 rounded-lg mt-4 max-h-60 overflow-y-auto transition-all duration-100">
       <h2 className="text-lg font-semibold mb-2">Live Captions</h2>
       <p className="whitespace-pre-wrap text-gray-300">
-        {transcript || "Waiting for speech..."}
-        {interimTranscript && (
-          <span className="text-gray-500 italic"> {interimTranscript}</span>
-        )}
+        {transcript
+          ? transcript.replace(/ \(interim\)$/g, "")
+          : "Waiting for speech..."}
       </p>
     </div>
   );

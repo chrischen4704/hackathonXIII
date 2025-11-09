@@ -105,7 +105,7 @@ export const LiveAINotes: React.FC<LiveAINotesProps> = ({ isActive, transcript }
       } finally {
         setIsProcessing(false);
       }
-    }, 60000); // Every 10 seconds
+    }, 10000); // Every 10 seconds
 
     return () => clearInterval(interval);
   }, [isActive, isProcessing]);

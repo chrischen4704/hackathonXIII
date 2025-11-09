@@ -4,6 +4,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { LiveCaptions } from "./LiveCaptions";
+import { LiveAINotes } from "./LiveAINotes";
 
 export function LectroNavbar({ recordMode = false }) {
     const navigate = useNavigate();
@@ -11,13 +12,14 @@ export function LectroNavbar({ recordMode = false }) {
     const [menuOpen, setMenuOpen] = useState(false);
     // const { id } = useParams();
     // const [listening, setListening] = useState(false);
-    // const [transcript, setTranscript] = useState("");
+    const [transcript, setTranscript] = useState("");
 
     //Home Page states
     const [showModal, setShowModal] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [ccActive, setCcActive] = useState(false);
+    const [aiNotesActive, setAiNotesActive] = useState(false);
 
     const handleCreateLecture = async () => {
         const docRef = await addDoc(collection(db, "lectures"), {
@@ -95,10 +97,14 @@ export function LectroNavbar({ recordMode = false }) {
                             </button>
                             {/* AI Notes Button */}
                             <button
-                                className="flex items-center gap-2 px-5 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg shadow focus:ring-4 focus:ring-red-300 text-m font-medium transition"
+                                onClick={() => setAiNotesActive((prev) => !prev)}
+                                className={`flex items-center gap-2 px-5 py-2 text-white rounded-lg shadow focus:ring-4 text-lg font-medium transition
+                                    ${aiNotesActive
+                                    ? "bg-red-700 hover:bg-red-800 focus:ring-red-400"
+                                    : "bg-red-600 hover:bg-red-700 focus:ring-red-300"
+                                    }`}
                                 aria-label="Live AI Note Taking"
-                                // onClick={yourAINotesHandler} GPT API
-                            >
+                                >
                                 <svg
                                     className="w-5 h-5"
                                     fill="currentColor"
@@ -107,7 +113,7 @@ export function LectroNavbar({ recordMode = false }) {
                                 >
                                     <circle cx="12" cy="12" r="8" />
                                 </svg>
-                                Start AI Notetaking
+                                {aiNotesActive ? "Stop Notes" : "Live AI Notes"}
                             </button>
                         </div>
                     ) : (
@@ -314,9 +320,20 @@ export function LectroNavbar({ recordMode = false }) {
                     </div>
                 </div>
             </nav>
-            <div className="mt-4 bg-neutral-900 text-white p-4 rounded-lg">
-                 {ccActive && <LiveCaptions isActive={ccActive} />}
-            </div>      
+            <div className="mt-4 bg-neutral-900 text-white p-4 rounded-lg space-y-4">
+                {ccActive && (
+                    <LiveCaptions
+                        isActive={ccActive}
+                        onTranscript={(text) => setTranscript(text)}
+                    />
+                )}
+                {aiNotesActive && (
+                    <LiveAINotes
+                        isActive={aiNotesActive}
+                        transcript={transcript}
+                    />
+                )}
+            </div>
            
             <Modal show={showModal} onClose={() => setShowModal(false)}>
                 <div className="flex justify-center bg-gray-900 rounded-lg shadow-xl w-[380px] mx-auto py-8 px-6 flex flex-col items-center">

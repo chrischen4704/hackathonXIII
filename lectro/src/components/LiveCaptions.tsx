@@ -16,15 +16,20 @@ interface SpeechRecognitionEvent extends Event {
   resultIndex: number;
   results: SpeechRecognitionResultList;
 }
+interface LiveCaptionsProps {
+  isActive: boolean;
+  onTranscript?: (text: string) => void;
+}
 
-/* --- Component --- */
-export const LiveCaptions: React.FC<{ isActive: boolean }> = ({ isActive }) => {
+export const LiveCaptions: React.FC<LiveCaptionsProps> = ({ isActive, onTranscript }) => {
   const [transcript, setTranscript] = useState("");
+  const [interimTranscript, setInterimTranscript] = useState("");
 
   // references for state tracking
   const recogRef = useRef<SpeechRecognition | null>(null);
   const runningRef = useRef(false);
   const activeRef = useRef(isActive);
+  const finalTranscriptRef = useRef(""); // Store accumulated final results
 
   useEffect(() => {
     activeRef.current = isActive;
@@ -47,21 +52,32 @@ export const LiveCaptions: React.FC<{ isActive: boolean }> = ({ isActive }) => {
 
     /* ---------- Handle new speech results ---------- */
     recog.onresult = (event: SpeechRecognitionEvent) => {
-      let fullText = "";
       let interimText = "";
 
-      // Build transcript from ALL results
-      for (let i = 0; i < event.results.length; i++) {
+      // Process only NEW results starting from resultIndex
+      for (let i = event.resultIndex; i < event.results.length; i++) {
         const result = event.results[i];
+        const text = result[0].transcript;
+
         if (result.isFinal) {
-          fullText += result[0].transcript + " ";
+          // Add final result to accumulated transcript
+          finalTranscriptRef.current += text + " ";
+          console.log("✅ Final:", text);
         } else {
-          interimText += result[0].transcript;
+          // Show interim results temporarily
+          interimText += text;
         }
       }
 
-      // Set the complete transcript
-      setTranscript((fullText + interimText).trim() + (interimText ? " (interim)" : ""));
+      // Update display with accumulated final + current interim
+      const fullText = finalTranscriptRef.current + interimText;
+      setTranscript(fullText.trim());
+      setInterimTranscript(interimText);
+
+      // Send only final accumulated text to parent
+      if (onTranscript) {
+        onTranscript(finalTranscriptRef.current.trim());
+      }
     };
 
     /* ---------- Error handling ---------- */
@@ -102,7 +118,7 @@ export const LiveCaptions: React.FC<{ isActive: boolean }> = ({ isActive }) => {
       recogRef.current = null;
       runningRef.current = false;
     };
-  }, []);
+  }, [onTranscript]);
 
   /* ---------- React to start/stop toggle ---------- */
   useEffect(() => {
@@ -112,6 +128,8 @@ export const LiveCaptions: React.FC<{ isActive: boolean }> = ({ isActive }) => {
     if (isActive) {
       // start listening
       setTranscript("");
+      setInterimTranscript("");
+      finalTranscriptRef.current = ""; // Reset accumulated transcript
       if (!runningRef.current) {
         try {
           recog.start();
@@ -129,6 +147,8 @@ export const LiveCaptions: React.FC<{ isActive: boolean }> = ({ isActive }) => {
       } catch {}
       runningRef.current = false;
       setTranscript("");
+      setInterimTranscript("");
+      finalTranscriptRef.current = "";
       console.log("🛑 Live CC stopped");
     }
   }, [isActive]);
@@ -138,9 +158,10 @@ export const LiveCaptions: React.FC<{ isActive: boolean }> = ({ isActive }) => {
     <div className="bg-neutral-900 text-white p-4 rounded-lg mt-4 max-h-60 overflow-y-auto transition-all duration-100">
       <h2 className="text-lg font-semibold mb-2">Live Captions</h2>
       <p className="whitespace-pre-wrap text-gray-300">
-        {transcript
-          ? transcript.replace(/ \(interim\)$/g, "")
-          : "Waiting for speech..."}
+        {transcript || "Waiting for speech..."}
+        {interimTranscript && (
+          <span className="text-gray-500 italic"> {interimTranscript}</span>
+        )}
       </p>
     </div>
   );

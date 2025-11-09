@@ -31,26 +31,40 @@ app.post("/api/transcribe", upload.single("audio"), async (req, res) => {
   }
 });
 
-// Summarize lecture
+// ✅ ONLY ONE /api/summarize endpoint
 app.post("/api/summarize", async (req, res) => {
   const { transcript } = req.body;
+  
+  console.log("📝 Received summarize request, transcript length:", transcript?.length || 0);
+  
+  if (!transcript || transcript.trim().length < 20) {
+    console.log("⚠️ Transcript too short, skipping");
+    return res.json({ notes: "Waiting for more content..." });
+  }
+  
   try {
-    const prompt = `
-      Summarize this lecture and make 5 flashcards + 3 key terms:
-      ${transcript}
-    `;
+    const prompt = `Create a brief summary of this lecture transcript in 2-3 concise bullet points.
+    Focus only on the main ideas and key takeaways.
+    Do NOT include flashcards, questions, or additional sections.
+    Format as simple bullet points.
+    Transcript: ${transcript}`;
+
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
     });
-    res.json({ notes: response.choices[0].message.content });
+    
+    const content = response.choices[0].message.content;
+    console.log("✅ AI Response received:", content);
+    
+    res.json({ notes: content });
   } catch (err) {
-    console.error(err);
+    console.error("❌ Summary error:", err);
     res.status(500).json({ error: "Summary failed" });
   }
 });
 
-// Define term
+// Define term (optional - add back if needed)
 app.post("/api/define", async (req, res) => {
   const { term } = req.body;
   try {
